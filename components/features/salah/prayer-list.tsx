@@ -33,11 +33,12 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
       if (existing) {
         const { data, error } = await supabase
           .from('prayers')
+          // @ts-expect-error Type inference issue
           .update({ 
             completed, 
             completed_time: completed ? new Date().toISOString() : null,
             jamaah: jamaah !== undefined ? jamaah : existing.jamaah 
-          } as any)
+          })
           .eq('id', existing.id)
           .select()
           .single()
@@ -47,6 +48,7 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
       } else {
         const { data, error } = await supabase
           .from('prayers')
+          // @ts-expect-error Type inference issue
           .insert({
             user_id: userId,
             date,
@@ -54,7 +56,7 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
             completed,
             completed_time: completed ? new Date().toISOString() : null,
             jamaah: jamaah || false
-          } as any)
+          })
           .select()
           .single()
           

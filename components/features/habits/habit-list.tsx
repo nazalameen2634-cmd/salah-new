@@ -35,7 +35,8 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
       if (existingLog) {
         const { data, error } = await supabase
           .from('habit_logs')
-          .update({ completed } as any)
+          // @ts-expect-error Type inference issue
+          .update({ completed })
           .eq('id', existingLog.id)
           .select()
           .single()
@@ -45,12 +46,13 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
       } else {
         const { data, error } = await supabase
           .from('habit_logs')
+          // @ts-expect-error Type inference issue
           .insert({
             user_id: userId,
             habit_id: habitId,
             date,
             completed,
-          } as any)
+          })
           .select()
           .single()
           

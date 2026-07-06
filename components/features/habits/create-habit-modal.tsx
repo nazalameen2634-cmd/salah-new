@@ -29,6 +29,7 @@ export function CreateHabitModal({ isOpen, onClose, userId, onSuccess }: CreateH
     mutationFn: async () => {
       const { data, error } = await supabase
         .from('habits')
+        // @ts-expect-error Type inference issue
         .insert({
           user_id: userId,
           name,
@@ -36,7 +37,7 @@ export function CreateHabitModal({ isOpen, onClose, userId, onSuccess }: CreateH
           frequency: 'daily',
           target: 1,
           active: true
-        } as any)
+        })
         .select()
         .single()
         
@@ -89,7 +90,7 @@ export function CreateHabitModal({ isOpen, onClose, userId, onSuccess }: CreateH
             </div>
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
-              <Select value={category} onValueChange={setCategory}>
+              <Select value={category} onValueChange={(val) => setCategory(val as string)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
