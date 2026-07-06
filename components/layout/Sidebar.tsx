@@ -1,0 +1,100 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import {
+  LayoutDashboard,
+  Calendar,
+  Activity,
+  BarChart3,
+  Settings,
+  LogOut,
+  Moon,
+  Sun
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
+
+const routes = [
+  {
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    href: '/',
+  },
+  {
+    label: "Today's Salah",
+    icon: Moon, // Custom icon for Salah
+    href: '/salah',
+  },
+  {
+    label: 'Habit Tracker',
+    icon: Activity,
+    href: '/habits',
+  },
+  {
+    label: 'Reports',
+    icon: BarChart3,
+    href: '/reports',
+  },
+  {
+    label: 'Calendar',
+    icon: Calendar,
+    href: '/calendar',
+  },
+  {
+    label: 'Settings',
+    icon: Settings,
+    href: '/settings',
+  },
+]
+
+export function Sidebar() {
+  const pathname = usePathname()
+  const router = useRouter()
+  const supabase = createClient()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
+
+  return (
+    <div className="space-y-4 py-4 flex flex-col h-full bg-zinc-50 dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100">
+      <div className="px-3 py-2 flex-1">
+        <Link href="/" className="flex items-center pl-3 mb-14">
+          <div className="relative h-8 w-8 mr-4 bg-emerald-600 rounded-lg flex items-center justify-center shadow-md">
+            <Moon className="h-5 w-5 text-white" />
+          </div>
+          <h1 className="text-xl font-bold tracking-tight">DeenDash</h1>
+        </Link>
+        <div className="space-y-1">
+          {routes.map((route) => (
+            <Link
+              key={route.href}
+              href={route.href}
+              className={cn(
+                'text-sm group flex p-3 w-full justify-start font-medium cursor-pointer rounded-lg transition-colors',
+                pathname === route.href
+                  ? 'bg-zinc-200/50 dark:bg-zinc-800/50 text-emerald-600 dark:text-emerald-400'
+                  : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/50'
+              )}
+            >
+              <div className="flex items-center flex-1">
+                <route.icon className={cn('h-5 w-5 mr-3', pathname === route.href ? 'text-emerald-600 dark:text-emerald-400' : '')} />
+                {route.label}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+      <div className="px-3 py-2">
+        <Button onClick={handleLogout} variant="ghost" className="w-full justify-start text-zinc-500 dark:text-zinc-400 hover:text-destructive dark:hover:text-destructive">
+          <LogOut className="h-5 w-5 mr-3" />
+          Sign Out
+        </Button>
+      </div>
+    </div>
+  )
+}
