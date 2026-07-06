@@ -32,10 +32,11 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
     mutationFn: async ({ habitId, completed }: { habitId: string, completed: boolean }) => {
       const existingLog = logs.find(l => l.habit_id === habitId)
       
-      if (existingLog) {
+      if (existingLog && !existingLog.id.toString().startsWith('temp-')) {
         const { data, error } = await (supabase.from('habit_logs') as any)
           .update({ completed })
-          .eq('id', existingLog.id)
+          .eq('habit_id', habitId)
+          .eq('date', date)
           .select()
           .single()
         
@@ -43,12 +44,12 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
         return data as HabitLog
       } else {
         const { data, error } = await (supabase.from('habit_logs') as any)
-          .insert({
+          .upsert({
             user_id: userId,
             habit_id: habitId,
             date,
             completed,
-          })
+          }, { onConflict: 'habit_id,date' })
           .select()
           .single()
           
@@ -56,10 +57,25 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
         return data as HabitLog
       }
     },
+    onMutate: async (variables) => {
+      setLogs(current => {
+        const existing = current.find(l => l.habit_id === variables.habitId)
+        if (existing) {
+          return current.map(l => l.habit_id === variables.habitId ? { ...l, completed: variables.completed } : l)
+        } else {
+          return [...current, {
+            id: 'temp-' + Date.now(),
+            user_id: userId,
+            habit_id: variables.habitId,
+            date,
+            completed: variables.completed,
+            notes: null,
+            created_at: new Date().toISOString()
+          }]
+        }
+      })
+    },
     onSuccess: (data) => {
-      if (data.completed) {
-        toast.success(`Habit marked as completed`)
-      }
       setLogs(current => {
         const exists = current.find(l => l.habit_id === data.habit_id)
         if (exists) {

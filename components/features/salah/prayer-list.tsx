@@ -30,29 +30,33 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
     mutationFn: async ({ prayerName, completed, jamaah }: { prayerName: string, completed: boolean, jamaah?: boolean }) => {
       const existing = prayers.find(p => p.prayer_name === prayerName)
       
-      if (existing) {
+      if (existing && !existing.id.toString().startsWith('temp-')) {
         const { data, error } = await (supabase.from('prayers') as any)
           .update({ 
             completed, 
             completed_time: completed ? new Date().toISOString() : null,
             jamaah: jamaah !== undefined ? jamaah : existing.jamaah 
           })
-          .eq('id', existing.id)
+          .eq('user_id', userId)
+          .eq('date', date)
+          .eq('prayer_name', prayerName)
           .select()
           .single()
         
         if (error) throw error
         return data as Prayer
       } else {
+        // If it was optimistic or doesn't exist, we upsert or insert
+        // But since Supabase insert might fail if it already exists, we can use upsert based on the unique constraint
         const { data, error } = await (supabase.from('prayers') as any)
-          .insert({
+          .upsert({
             user_id: userId,
             date,
             prayer_name: prayerName,
             completed,
             completed_time: completed ? new Date().toISOString() : null,
             jamaah: jamaah || false
-          })
+          }, { onConflict: 'user_id,date,prayer_name' })
           .select()
           .single()
           
@@ -60,10 +64,32 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
         return data as Prayer
       }
     },
+    onMutate: async (variables) => {
+      // Instant Optimistic Update
+      setPrayers(current => {
+        const existing = current.find(p => p.prayer_name === variables.prayerName)
+        if (existing) {
+          return current.map(p => p.prayer_name === variables.prayerName ? { 
+            ...p, 
+            completed: variables.completed,
+            jamaah: variables.jamaah !== undefined ? variables.jamaah : p.jamaah
+          } : p)
+        } else {
+          return [...current, {
+            id: 'temp-' + Date.now(),
+            user_id: userId,
+            date,
+            prayer_name: variables.prayerName,
+            completed: variables.completed,
+            completed_time: variables.completed ? new Date().toISOString() : null,
+            jamaah: variables.jamaah || false,
+            notes: null,
+            created_at: new Date().toISOString()
+          }]
+        }
+      })
+    },
     onSuccess: (data) => {
-      if (data.completed) {
-        toast.success(`${data.prayer_name} marked as completed`)
-      }
       setPrayers(current => {
         const exists = current.find(p => p.prayer_name === data.prayer_name)
         if (exists) {
