@@ -56,36 +56,22 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
         return data as HabitLog
       }
     },
-    onMutate: async (variables) => {
-      setLogs(current => {
-        const existing = current.find(l => l.habit_id === variables.habitId)
-        if (existing) {
-          return current.map(l => l.habit_id === variables.habitId ? { ...l, completed: variables.completed } : l)
-        } else {
-          return [...current, {
-            id: 'temp-' + Date.now(),
-            user_id: userId,
-            habit_id: variables.habitId,
-            date,
-            completed: variables.completed,
-            notes: null,
-            created_at: new Date().toISOString()
-          }]
-        }
-      })
-    },
     onSuccess: (data) => {
       if (data.completed) {
         toast.success(`Habit marked as completed`)
       }
-      setLogs(current => current.map(l => l.habit_id === data.habit_id ? data : l))
+      setLogs(current => {
+        const exists = current.find(l => l.habit_id === data.habit_id)
+        if (exists) {
+          return current.map(l => l.habit_id === data.habit_id ? data : l)
+        }
+        return [...current, data]
+      })
       queryClient.invalidateQueries({ queryKey: ['habit_logs', date] })
     },
     onError: (error: any) => {
       console.error(error)
       toast.error(error.message || "Failed to update habit status")
-      // Revert optimistic update
-      setLogs(initialLogs)
     }
   })
 

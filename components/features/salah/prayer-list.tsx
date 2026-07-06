@@ -60,44 +60,22 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
         return data as Prayer
       }
     },
-    onMutate: async (variables) => {
-      // Optimistic update
-      setPrayers(current => {
-        const existing = current.find(p => p.prayer_name === variables.prayerName)
-        if (existing) {
-          return current.map(p => p.prayer_name === variables.prayerName ? { 
-            ...p, 
-            completed: variables.completed,
-            jamaah: variables.jamaah !== undefined ? variables.jamaah : p.jamaah
-          } : p)
-        } else {
-          return [...current, {
-            id: 'temp-' + Date.now(),
-            user_id: userId,
-            date,
-            prayer_name: variables.prayerName,
-            completed: variables.completed,
-            completed_time: variables.completed ? new Date().toISOString() : null,
-            jamaah: variables.jamaah || false,
-            notes: null,
-            created_at: new Date().toISOString()
-          }]
-        }
-      })
-    },
     onSuccess: (data) => {
       if (data.completed) {
         toast.success(`${data.prayer_name} marked as completed`)
       }
-      // Replace the temp ID with the real ID from the database
-      setPrayers(current => current.map(p => p.prayer_name === data.prayer_name ? data : p))
+      setPrayers(current => {
+        const exists = current.find(p => p.prayer_name === data.prayer_name)
+        if (exists) {
+          return current.map(p => p.prayer_name === data.prayer_name ? data : p)
+        }
+        return [...current, data]
+      })
       queryClient.invalidateQueries({ queryKey: ['prayers', date] })
     },
     onError: (error: any) => {
       console.error(error)
       toast.error(error.message || "Failed to update prayer status")
-      // Revert optimistic update
-      setPrayers(initialPrayers)
     }
   })
 
