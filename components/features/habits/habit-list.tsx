@@ -80,8 +80,9 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
       }
       queryClient.invalidateQueries({ queryKey: ['habit_logs', date] })
     },
-    onError: () => {
-      toast.error("Failed to update habit status")
+    onError: (error: any) => {
+      console.error(error)
+      toast.error(error.message || "Failed to update habit status")
     }
   })
 

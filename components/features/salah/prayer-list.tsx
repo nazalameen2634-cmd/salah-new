@@ -91,8 +91,9 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
       }
       queryClient.invalidateQueries({ queryKey: ['prayers', date] })
     },
-    onError: () => {
-      toast.error("Failed to update prayer status")
+    onError: (error: any) => {
+      console.error(error)
+      toast.error(error.message || "Failed to update prayer status")
       // Revert optimistic update by refreshing from server state could go here
     }
   })
