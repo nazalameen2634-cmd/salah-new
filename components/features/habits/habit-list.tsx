@@ -84,6 +84,8 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
     onError: (error: any) => {
       console.error(error)
       toast.error(error.message || "Failed to update habit status")
+      // Revert optimistic update
+      setLogs(initialLogs)
     }
   })
 
@@ -133,15 +135,16 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
                       <Checkbox
                         id={`habit-${habit.id}`}
                         checked={isCompleted}
+                        disabled={toggleHabit.isPending}
                         onCheckedChange={(checked) => {
                           toggleHabit.mutate({ 
                             habitId: habit.id, 
                             completed: checked as boolean 
                           })
                         }}
-                        className={`h-6 w-6 rounded transition-all ${
+                        className={`h-6 w-6 rounded-full transition-all ${
                           isCompleted ? 'data-[state=checked]:bg-emerald-600 data-[state=checked]:text-white data-[state=checked]:border-emerald-600' : ''
-                        }`}
+                        } ${toggleHabit.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                       />
                       <div className="flex-1">
                         <Label
