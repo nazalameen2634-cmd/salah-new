@@ -33,9 +33,7 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
       const existingLog = logs.find(l => l.habit_id === habitId)
       
       if (existingLog) {
-        const { data, error } = await supabase
-          .from('habit_logs')
-          // @ts-expect-error Type inference issue
+        const { data, error } = await (supabase.from('habit_logs') as any)
           .update({ completed })
           .eq('id', existingLog.id)
           .select()
@@ -44,9 +42,7 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
         if (error) throw error
         return data as HabitLog
       } else {
-        const { data, error } = await supabase
-          .from('habit_logs')
-          // @ts-expect-error Type inference issue
+        const { data, error } = await (supabase.from('habit_logs') as any)
           .insert({
             user_id: userId,
             habit_id: habitId,

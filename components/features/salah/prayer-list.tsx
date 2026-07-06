@@ -31,9 +31,7 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
       const existing = prayers.find(p => p.prayer_name === prayerName)
       
       if (existing) {
-        const { data, error } = await supabase
-          .from('prayers')
-          // @ts-expect-error Type inference issue
+        const { data, error } = await (supabase.from('prayers') as any)
           .update({ 
             completed, 
             completed_time: completed ? new Date().toISOString() : null,
@@ -46,9 +44,7 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
         if (error) throw error
         return data as Prayer
       } else {
-        const { data, error } = await supabase
-          .from('prayers')
-          // @ts-expect-error Type inference issue
+        const { data, error } = await (supabase.from('prayers') as any)
           .insert({
             user_id: userId,
             date,

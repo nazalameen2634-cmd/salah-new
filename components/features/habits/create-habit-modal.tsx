@@ -27,9 +27,7 @@ export function CreateHabitModal({ isOpen, onClose, userId, onSuccess }: CreateH
 
   const createHabit = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase
-        .from('habits')
-        // @ts-expect-error Type inference issue
+      const { data, error } = await (supabase.from('habits') as any)
         .insert({
           user_id: userId,
           name,
