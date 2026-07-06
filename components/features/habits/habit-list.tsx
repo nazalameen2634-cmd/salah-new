@@ -78,6 +78,7 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
       if (data.completed) {
         toast.success(`Habit marked as completed`)
       }
+      setLogs(current => current.map(l => l.habit_id === data.habit_id ? data : l))
       queryClient.invalidateQueries({ queryKey: ['habit_logs', date] })
     },
     onError: (error: any) => {

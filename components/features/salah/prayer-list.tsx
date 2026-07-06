@@ -89,6 +89,8 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
       if (data.completed) {
         toast.success(`${data.prayer_name} marked as completed`)
       }
+      // Replace the temp ID with the real ID from the database
+      setPrayers(current => current.map(p => p.prayer_name === data.prayer_name ? data : p))
       queryClient.invalidateQueries({ queryKey: ['prayers', date] })
     },
     onError: (error: any) => {
