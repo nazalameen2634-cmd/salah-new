@@ -1,7 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { HabitList } from '@/components/features/habits/habit-list'
+import { DateNavigator } from '@/components/shared/date-navigator'
 
-export default async function HabitsPage() {
+export default async function HabitsPage(props: { searchParams: Promise<{ date?: string }> }) {
+  const searchParams = await props.searchParams
   const supabase = await createClient()
 
   const {
@@ -10,38 +12,43 @@ export default async function HabitsPage() {
 
   if (!user) return null
 
-  // Fetch active habits
-  const { data: habits } = await supabase
-    .from('habits')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('active', true)
-    .order('created_at', { ascending: true })
-
-  // Fetch today's habit logs
   const today = new Date().toISOString().split('T')[0]
-  const { data: habitLogs } = await supabase
-    .from('habit_logs')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('date', today)
+  const date = searchParams.date || today
+
+  // Fetch habits and today's logs in parallel
+  const [habitsResponse, logsResponse] = await Promise.all([
+    supabase
+      .from('habits')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('active', true)
+      .order('created_at'),
+    supabase
+      .from('habit_logs')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('date', date)
+  ])
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Habit Tracker</h1>
           <p className="text-muted-foreground">
             Build good habits, break bad ones.
           </p>
         </div>
+        <div className="flex items-center space-x-2">
+          <DateNavigator currentDate={date} />
+        </div>
       </div>
 
       <HabitList 
-        initialHabits={habits || []} 
-        initialLogs={habitLogs || []} 
-        userId={user.id} 
-        date={today} 
+        initialHabits={habitsResponse.data || []} 
+        initialLogs={logsResponse.data || []}
+        userId={user.id}
+        date={date}
       />
     </div>
   )

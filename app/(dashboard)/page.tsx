@@ -1,30 +1,36 @@
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Activity, CalendarDays, Flame, Award } from 'lucide-react'
+import { DateNavigator } from '@/components/shared/date-navigator'
 
-export default async function DashboardPage() {
+export default async function DashboardPage(props: { searchParams: Promise<{ date?: string }> }) {
+  const searchParams = await props.searchParams
   const supabase = await createClient()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) return null
+  if (!user) {
+    redirect('/login')
+  }
 
   const today = new Date().toISOString().split('T')[0]
+  const date = searchParams.date || today
 
-  // Fetch today's prayers
+  // Fetch data for the specified date
   const { data: prayersData } = await supabase
     .from('prayers')
     .select('*')
     .eq('user_id', user.id)
-    .eq('date', today)
+    .eq('date', date)
 
   const prayers = prayersData as any[] | null
   const completedPrayers = prayers?.filter(p => p.completed).length || 0
   const prayerPercentage = Math.round((completedPrayers / 5) * 100)
 
-  // Fetch today's habits
+  // Fetch active habits
   const { data: activeHabits } = await supabase
     .from('habits')
     .select('id')
@@ -35,7 +41,7 @@ export default async function DashboardPage() {
     .from('habit_logs')
     .select('*')
     .eq('user_id', user.id)
-    .eq('date', today)
+    .eq('date', date)
 
   const habitLogs = habitLogsData as any[] | null
   const totalHabits = activeHabits?.length || 0
@@ -53,11 +59,14 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back. Here is your overview for today.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Overview of your progress for {date === today ? 'today' : date}.
+          </p>
+        </div>
+        <DateNavigator currentDate={date} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
