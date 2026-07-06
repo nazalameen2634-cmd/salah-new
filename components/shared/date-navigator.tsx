@@ -28,23 +28,26 @@ export function DateNavigator({ currentDate }: { currentDate: string }) {
     // Ensure we use the local date string (YYYY-MM-DD)
     const dateString = format(newDate, 'yyyy-MM-dd')
     
-    // If it's today, we can just clear the param to keep the URL clean
-    if (isToday(newDate)) {
-      params.delete('date')
-    } else {
-      params.set('date', dateString)
-    }
+    // Always set explicitly to avoid UTC mismatch with server
+    params.set('date', dateString)
 
     const query = params.toString()
-    router.push(`${pathname}${query ? `?${query}` : ''}`)
+    router.push(`${pathname}?${query}`, { scroll: false })
   }
 
   const goBack = () => navigateToDate(subDays(date, 1))
   const goForward = () => navigateToDate(addDays(date, 1))
 
+  // Calculate if the current viewed date is today or in the future
+  // We use format to compare YYYY-MM-DD safely
+  const todayStr = format(new Date(), 'yyyy-MM-dd')
+  const dateStr = format(date, 'yyyy-MM-dd')
+  const isCurrentlyToday = dateStr === todayStr
+  const isFuture = dateStr > todayStr
+
   const getDisplayFormat = () => {
-    if (isToday(date)) return 'Today'
-    if (isYesterday(date)) return 'Yesterday'
+    if (isCurrentlyToday) return 'Today'
+    if (dateStr === format(subDays(new Date(), 1), 'yyyy-MM-dd')) return 'Yesterday'
     return format(date, 'MMM d, yyyy')
   }
 
@@ -73,6 +76,7 @@ export function DateNavigator({ currentDate }: { currentDate: string }) {
           <Calendar
             mode="single"
             selected={date}
+            disabled={(d) => d > new Date()} // Prevent selecting future dates
             onSelect={(newDate) => {
               if (newDate) {
                 navigateToDate(newDate)
@@ -88,7 +92,7 @@ export function DateNavigator({ currentDate }: { currentDate: string }) {
         size="icon" 
         className="h-8 w-8 rounded-full" 
         onClick={goForward}
-        disabled={isToday(date)} // Prevent going into the future for daily tracking
+        disabled={isCurrentlyToday} // Prevent going into the future for daily tracking
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

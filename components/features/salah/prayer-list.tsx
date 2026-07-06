@@ -131,7 +131,6 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
                   <Checkbox
                     id={`prayer-${prayerName}`}
                     checked={isCompleted}
-                    disabled={togglePrayer.isPending}
                     onCheckedChange={(checked) => {
                       togglePrayer.mutate({ 
                         prayerName, 
@@ -140,7 +139,7 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
                     }}
                     className={`h-6 w-6 rounded-full transition-all ${
                       isCompleted ? 'data-[state=checked]:bg-emerald-600 data-[state=checked]:text-white data-[state=checked]:border-emerald-600' : ''
-                    } ${togglePrayer.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    }`}
                   />
                   <div>
                     <Label
@@ -168,7 +167,6 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
 
                 <div className="flex flex-col items-end">
                   <button
-                    disabled={togglePrayer.isPending}
                     onClick={() => {
                       togglePrayer.mutate({ 
                         prayerName, 
@@ -180,7 +178,7 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
                       isJamaah 
                         ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300' 
                         : 'text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                    } ${togglePrayer.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    }`}
                     title={isJamaah ? "Prayed in congregation" : "Mark as congregation"}
                   >
                     <Users className="h-5 w-5" />
