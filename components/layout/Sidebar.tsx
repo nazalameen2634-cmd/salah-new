@@ -13,7 +13,7 @@ import {
   Moon,
   Sun,
   Flame,
-  Settings
+  User
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -49,9 +49,9 @@ const routes = [
     href: '/calendar',
   },
   {
-    label: 'Settings',
-    icon: Settings,
-    href: '/settings',
+    label: 'Profile',
+    icon: User,
+    href: '/profile',
   },
 ]
 

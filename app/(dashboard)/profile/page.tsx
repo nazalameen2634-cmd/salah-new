@@ -4,16 +4,16 @@ import { ProfileForm } from '@/components/features/settings/profile-form'
 
 import { getAuthCookie } from '@/lib/auth'
 
-export default async function SettingsPage() {
+export default async function ProfilePage() {
   const userId = await getAuthCookie()
   if (!userId) redirect('/login')
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
         <p className="text-muted-foreground">
-          Manage your account settings and preferences.
+          Manage your personal information and preferences.
         </p>
       </div>
       
