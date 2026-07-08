@@ -9,6 +9,10 @@ export async function login(formData: FormData) {
   if (!phone) {
     return { error: 'Phone number is required' }
   }
+  
+  if (!/^[0-9]{10}$/.test(phone)) {
+    return { error: 'Please enter a valid 10-digit Indian phone number' }
+  }
 
   const supabase = await createClient()
 
@@ -34,6 +38,10 @@ export async function signup(formData: FormData) {
 
   if (!phone || !name) {
     return { error: 'Name and phone number are required' }
+  }
+
+  if (!/^[0-9]{10}$/.test(phone)) {
+    return { error: 'Please enter a valid 10-digit Indian phone number' }
   }
 
   const supabase = await createClient()

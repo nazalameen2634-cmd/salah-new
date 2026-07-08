@@ -57,7 +57,8 @@ export default function SignupPage() {
                 id="phone"
                 name="phone"
                 type="tel"
-                placeholder="+1 234 567 8900"
+                pattern="^[0-9]{10}$"
+                title="Please enter a valid 10-digit Indian phone number"
                 required
                 className="h-11"
               />
