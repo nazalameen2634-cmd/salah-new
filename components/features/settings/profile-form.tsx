@@ -46,15 +46,14 @@ export function ProfileForm({ userId }: { userId: string }) {
 
   const updateProfile = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase
-        .from('profiles')
+      const { error } = await (supabase.from('profiles') as any)
         .update({
           name: formData.name,
           username: formData.username,
           country: formData.country,
           time_zone: formData.time_zone,
           language: formData.language,
-        } as any)
+        })
         .eq('id', userId)
 
       if (error) throw error
