@@ -11,16 +11,17 @@ import { toast } from 'sonner'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
-export function ProfileForm({ userId }: { userId: string }) {
+export function ProfileForm() {
+  const userId = '00000000-0000-0000-0000-000000000000'
   const supabase = createClient()
   const queryClient = useQueryClient()
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', userId],
     queryFn: async () => {
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single()
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
       if (error) throw error
-      return data as Profile
+      return (data || {}) as Profile
     }
   })
 
@@ -47,14 +48,14 @@ export function ProfileForm({ userId }: { userId: string }) {
   const updateProfile = useMutation({
     mutationFn: async () => {
       const { error } = await (supabase.from('profiles') as any)
-        .update({
+        .upsert({
+          id: userId,
           name: formData.name,
           username: formData.username,
           country: formData.country,
           time_zone: formData.time_zone,
           language: formData.language,
         })
-        .eq('id', userId)
 
       if (error) throw error
     },

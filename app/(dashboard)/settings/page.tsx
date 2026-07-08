@@ -3,13 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import { ProfileForm } from '@/components/features/settings/profile-form'
 
 export default async function SettingsPage() {
-  const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/login')
-  }
 
   return (
     <div className="space-y-6">
@@ -20,7 +13,7 @@ export default async function SettingsPage() {
         </p>
       </div>
       
-      <ProfileForm userId={user.id} />
+      <ProfileForm />
       
     </div>
   )

@@ -3,20 +3,11 @@ import { MobileNav } from '@/components/layout/MobileNav'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/login')
-  }
 
   return (
     <div className="h-[100dvh] relative flex bg-zinc-50 dark:bg-zinc-950 overflow-hidden">
