@@ -188,10 +188,8 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
                           <p className="text-xs text-muted-foreground mt-1 capitalize">{habit.category || 'General'}</p>
                         </div>
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
+                          <DropdownMenuTrigger className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent">
+                            <MoreVertical className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => setEditingHabit(habit)}>
