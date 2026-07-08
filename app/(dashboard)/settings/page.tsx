@@ -2,7 +2,11 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { ProfileForm } from '@/components/features/settings/profile-form'
 
+import { getAuthCookie } from '@/lib/auth'
+
 export default async function SettingsPage() {
+  const userId = await getAuthCookie()
+  if (!userId) redirect('/login')
 
   return (
     <div className="space-y-6">
@@ -13,7 +17,7 @@ export default async function SettingsPage() {
         </p>
       </div>
       
-      <ProfileForm />
+      <ProfileForm userId={userId} />
       
     </div>
   )

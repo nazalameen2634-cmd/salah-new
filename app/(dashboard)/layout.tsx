@@ -2,12 +2,18 @@ import { Sidebar } from '@/components/layout/Sidebar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { getAuthCookie } from '@/lib/auth'
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const userId = await getAuthCookie()
+
+  if (!userId) {
+    redirect('/login')
+  }
 
   return (
     <div className="h-[100dvh] relative flex bg-zinc-50 dark:bg-zinc-950 overflow-hidden">

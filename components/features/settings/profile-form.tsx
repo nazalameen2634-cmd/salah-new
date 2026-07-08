@@ -11,8 +11,7 @@ import { toast } from 'sonner'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
-export function ProfileForm() {
-  const userId = '00000000-0000-0000-0000-000000000000'
+export function ProfileForm({ userId }: { userId: string }) {
   const supabase = createClient()
   const queryClient = useQueryClient()
 

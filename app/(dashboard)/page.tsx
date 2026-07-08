@@ -3,10 +3,16 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Activity, CalendarDays, Flame, Award } from 'lucide-react'
 import { DateNavigator } from '@/components/shared/date-navigator'
+import { getAuthCookie } from '@/lib/auth'
 
 export default async function DashboardPage(props: { searchParams: Promise<{ date?: string }> }) {
   const searchParams = await props.searchParams
   const supabase = await createClient()
+  const userId = await getAuthCookie()
+
+  if (!userId) {
+    redirect('/login')
+  }
 
   const today = new Date().toISOString().split('T')[0]
   const date = searchParams.date || today
@@ -15,6 +21,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ dat
   const { data: prayersData } = await supabase
     .from('prayers')
     .select('*')
+    .eq('user_id', userId)
     .eq('date', date)
 
   const prayers = prayersData as any[] | null
@@ -25,11 +32,13 @@ export default async function DashboardPage(props: { searchParams: Promise<{ dat
   const { data: activeHabits } = await supabase
     .from('habits')
     .select('id')
+    .eq('user_id', userId)
     .eq('active', true)
 
   const { data: habitLogsData } = await supabase
     .from('habit_logs')
     .select('*')
+    .eq('user_id', userId)
     .eq('date', date)
 
   const habitLogs = habitLogsData as any[] | null

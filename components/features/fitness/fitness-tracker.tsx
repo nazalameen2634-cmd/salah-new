@@ -16,9 +16,10 @@ import { DateNavigator } from '@/components/shared/date-navigator'
 interface FitnessTrackerProps {
   date: string
   initialLog: FitnessLog | null
+  userId: string
 }
 
-export function FitnessTracker({ date, initialLog }: FitnessTrackerProps) {
+export function FitnessTracker({ date, initialLog, userId }: FitnessTrackerProps) {
   const supabase = createClient()
   const queryClient = useQueryClient()
   
@@ -39,6 +40,7 @@ export function FitnessTracker({ date, initialLog }: FitnessTrackerProps) {
   const saveFitnessLog = useMutation({
     mutationFn: async () => {
       const logData = {
+        user_id: userId,
         date,
         calories_burned: caloriesBurned ? parseInt(caloriesBurned) : 0,
         active_minutes: activeMinutes ? parseInt(activeMinutes) : 0,
@@ -56,7 +58,7 @@ export function FitnessTracker({ date, initialLog }: FitnessTrackerProps) {
         return data
       } else {
         const { data, error } = await (supabase.from('fitness_logs') as any)
-          .upsert(logData, { onConflict: 'date' })
+          .upsert(logData, { onConflict: 'user_id,date' })
           .select()
           .single()
         if (error) throw error

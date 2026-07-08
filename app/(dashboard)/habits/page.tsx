@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { HabitList } from '@/components/features/habits/habit-list'
 import { DateNavigator } from '@/components/shared/date-navigator'
+import { getAuthCookie } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
 export default async function HabitsPage(props: { searchParams: Promise<{ date?: string }> }) {
   const searchParams = await props.searchParams
@@ -9,16 +11,21 @@ export default async function HabitsPage(props: { searchParams: Promise<{ date?:
   const today = new Date().toISOString().split('T')[0]
   const date = searchParams.date || today
 
+  const userId = await getAuthCookie()
+  if (!userId) redirect('/login')
+
   // Fetch habits and today's logs in parallel
   const [habitsResponse, logsResponse] = await Promise.all([
     supabase
       .from('habits')
       .select('*')
+      .eq('user_id', userId)
       .eq('active', true)
       .order('created_at'),
     supabase
       .from('habit_logs')
       .select('*')
+      .eq('user_id', userId)
       .eq('date', date)
   ])
 
@@ -40,6 +47,7 @@ export default async function HabitsPage(props: { searchParams: Promise<{ date?:
         initialHabits={habitsResponse.data || []} 
         initialLogs={logsResponse.data || []}
         date={date}
+        userId={userId}
       />
     </div>
   )

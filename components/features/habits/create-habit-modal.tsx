@@ -15,9 +15,10 @@ interface CreateHabitModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: (habit: Habit) => void
+  userId: string
 }
 
-export function CreateHabitModal({ isOpen, onClose, onSuccess }: CreateHabitModalProps) {
+export function CreateHabitModal({ isOpen, onClose, onSuccess, userId }: CreateHabitModalProps) {
   const supabase = createClient()
   const queryClient = useQueryClient()
   
@@ -28,6 +29,7 @@ export function CreateHabitModal({ isOpen, onClose, onSuccess }: CreateHabitModa
     mutationFn: async () => {
       const { data, error } = await (supabase.from('habits') as any)
         .insert({
+          user_id: userId,
           name,
           category,
           frequency: 'daily',

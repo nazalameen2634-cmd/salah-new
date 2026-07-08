@@ -19,9 +19,10 @@ interface HabitListProps {
   initialHabits: Habit[]
   initialLogs: HabitLog[]
   date: string
+  userId: string
 }
 
-export function HabitList({ initialHabits, initialLogs, date }: HabitListProps) {
+export function HabitList({ initialHabits, initialLogs, date, userId }: HabitListProps) {
   const supabase = createClient()
   const queryClient = useQueryClient()
   
@@ -62,6 +63,7 @@ export function HabitList({ initialHabits, initialLogs, date }: HabitListProps) 
       if (existingLog && !existingLog.id.toString().startsWith('temp-')) {
         const { data, error } = await (supabase.from('habit_logs') as any)
           .update({ completed })
+          .eq('user_id', userId)
           .eq('habit_id', habitId)
           .eq('date', date)
           .select()
@@ -73,9 +75,10 @@ export function HabitList({ initialHabits, initialLogs, date }: HabitListProps) 
         const { data, error } = await (supabase.from('habit_logs') as any)
           .upsert({
             habit_id: habitId,
+            user_id: userId,
             date,
             completed,
-          }, { onConflict: 'habit_id,date' })
+          }, { onConflict: 'habit_id,user_id,date' })
           .select()
           .single()
           
@@ -92,6 +95,7 @@ export function HabitList({ initialHabits, initialLogs, date }: HabitListProps) 
           return [...current, {
             id: 'temp-' + Date.now(),
             habit_id: variables.habitId,
+            user_id: userId,
             date,
             completed: variables.completed,
             notes: null,
@@ -212,6 +216,7 @@ export function HabitList({ initialHabits, initialLogs, date }: HabitListProps) 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSuccess={(newHabit) => setHabits([...habits, newHabit])}
+        userId={userId}
       />
       <EditHabitModal
         isOpen={!!editingHabit}

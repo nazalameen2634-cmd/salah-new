@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { signout } from '@/app/login/actions'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -85,6 +86,19 @@ export function Sidebar() {
             </Link>
           ))}
         </div>
+      </div>
+      <div className="mt-auto px-3 py-4 border-t border-zinc-200 dark:border-zinc-800">
+        <form action={signout}>
+          <button
+            type="submit"
+            className="text-sm group flex p-3 w-full justify-start font-medium cursor-pointer rounded-lg transition-colors text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
+          >
+            <div className="flex items-center flex-1">
+              <LogOut className="h-5 w-5 mr-3" />
+              Sign Out
+            </div>
+          </button>
+        </form>
       </div>
     </div>
   )

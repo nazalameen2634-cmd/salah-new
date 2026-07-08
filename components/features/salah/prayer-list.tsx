@@ -16,9 +16,10 @@ const DEFAULT_PRAYERS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']
 interface PrayerListProps {
   initialPrayers: Prayer[]
   date: string
+  userId: string
 }
 
-export function PrayerList({ initialPrayers, date }: PrayerListProps) {
+export function PrayerList({ initialPrayers, date, userId }: PrayerListProps) {
   const supabase = createClient()
   const queryClient = useQueryClient()
   
@@ -36,6 +37,7 @@ export function PrayerList({ initialPrayers, date }: PrayerListProps) {
             completed_time: completed ? new Date().toISOString() : null,
             jamaah: jamaah !== undefined ? jamaah : existing.jamaah 
           })
+          .eq('user_id', userId)
           .eq('date', date)
           .eq('prayer_name', prayerName)
           .select()
@@ -48,12 +50,13 @@ export function PrayerList({ initialPrayers, date }: PrayerListProps) {
         // But since Supabase insert might fail if it already exists, we can use upsert based on the unique constraint
         const { data, error } = await (supabase.from('prayers') as any)
           .upsert({
+            user_id: userId,
             date,
             prayer_name: prayerName,
             completed,
             completed_time: completed ? new Date().toISOString() : null,
             jamaah: jamaah || false
-          }, { onConflict: 'date,prayer_name' })
+          }, { onConflict: 'user_id,date,prayer_name' })
           .select()
           .single()
           
@@ -74,6 +77,7 @@ export function PrayerList({ initialPrayers, date }: PrayerListProps) {
         } else {
           return [...current, {
             id: 'temp-' + Date.now(),
+            user_id: userId,
             date,
             prayer_name: variables.prayerName,
             completed: variables.completed,

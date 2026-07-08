@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { PrayerList } from '@/components/features/salah/prayer-list'
 import { DateNavigator } from '@/components/shared/date-navigator'
+import { getAuthCookie } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
 export default async function SalahPage(props: { searchParams: Promise<{ date?: string }> }) {
   const searchParams = await props.searchParams
@@ -13,9 +15,13 @@ export default async function SalahPage(props: { searchParams: Promise<{ date?: 
   const today = new Date().toISOString().split('T')[0]
   const date = searchParams.date || today
   
+  const userId = await getAuthCookie()
+  if (!userId) redirect('/login')
+
   const { data: prayers } = await supabase
     .from('prayers')
     .select('*')
+    .eq('user_id', userId)
     .eq('date', date)
 
   return (
@@ -30,7 +36,7 @@ export default async function SalahPage(props: { searchParams: Promise<{ date?: 
         <DateNavigator currentDate={date} />
       </div>
 
-      <PrayerList initialPrayers={prayers || []} date={date} />
+      <PrayerList initialPrayers={prayers || []} date={date} userId={userId} />
     </div>
   )
 }
