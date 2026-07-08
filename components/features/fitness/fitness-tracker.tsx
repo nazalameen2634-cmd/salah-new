@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { Flame, Activity, Footprints, Droplets } from 'lucide-react'
 import { format } from 'date-fns'
+import { DateNavigator } from '@/components/shared/date-navigator'
 
 interface FitnessTrackerProps {
   date: string
@@ -78,11 +79,12 @@ export function FitnessTracker({ date, initialLog }: FitnessTrackerProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Fitness Tracker</h2>
           <p className="text-muted-foreground">Track your physical activity for {format(new Date(date), 'MMMM do, yyyy')}</p>
         </div>
+        <DateNavigator currentDate={date} />
       </div>
 
       <form onSubmit={handleSubmit}>
