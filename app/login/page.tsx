@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useFormStatus } from 'react-dom'
 import { login, loginWithGoogle } from './actions'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -122,14 +122,6 @@ export default function LoginPage({
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-center border-t p-4">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Don't have an account?{' '}
-            <Link href="/signup" className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium">
-              Sign up
-            </Link>
-          </p>
-        </CardFooter>
       </Card>
     </div>
   )
