@@ -163,6 +163,38 @@ export interface Database {
           created_at?: string
         }
       }
+      fitness_logs: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          calories_burned: number | null
+          active_minutes: number | null
+          steps: number | null
+          water_intake_ml: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          calories_burned?: number | null
+          active_minutes?: number | null
+          steps?: number | null
+          water_intake_ml?: number | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          calories_burned?: number | null
+          active_minutes?: number | null
+          steps?: number | null
+          water_intake_ml?: number | null
+          created_at?: string
+        }
+      }
     }
   }
 }
@@ -176,3 +208,4 @@ export type Prayer = Tables<'prayers'>
 export type Habit = Tables<'habits'>
 export type HabitLog = Tables<'habit_logs'>
 export type Journal = Tables<'journal'>
+export type FitnessLog = Tables<'fitness_logs'>

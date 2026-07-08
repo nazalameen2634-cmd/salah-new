@@ -61,6 +61,18 @@ create table public.journal (
   unique (user_id, date)
 );
 
+-- 6. Fitness Logs Table
+create table public.fitness_logs (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  date date not null,
+  calories_burned integer default 0,
+  active_minutes integer default 0,
+  steps integer default 0,
+  water_intake_ml integer default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  unique (user_id, date)
+);
 
 -- Row Level Security (RLS) Configuration
 alter table public.profiles enable row level security;
@@ -68,6 +80,7 @@ alter table public.prayers enable row level security;
 alter table public.habits enable row level security;
 alter table public.habit_logs enable row level security;
 alter table public.journal enable row level security;
+alter table public.fitness_logs enable row level security;
 
 -- Policies for profiles
 create policy "Users can view own profile." on public.profiles for select using (auth.uid() = id);
@@ -110,3 +123,9 @@ create policy "Users can view own journal." on public.journal for select using (
 create policy "Users can insert own journal." on public.journal for insert with check (auth.uid() = user_id);
 create policy "Users can update own journal." on public.journal for update using (auth.uid() = user_id);
 create policy "Users can delete own journal." on public.journal for delete using (auth.uid() = user_id);
+
+-- Policies for fitness logs
+create policy "Users can view own fitness logs." on public.fitness_logs for select using (auth.uid() = user_id);
+create policy "Users can insert own fitness logs." on public.fitness_logs for insert with check (auth.uid() = user_id);
+create policy "Users can update own fitness logs." on public.fitness_logs for update using (auth.uid() = user_id);
+create policy "Users can delete own fitness logs." on public.fitness_logs for delete using (auth.uid() = user_id);

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, MoonStar, Activity, BarChart2, Calendar } from 'lucide-react'
+import { LayoutDashboard, MoonStar, Activity, BarChart2, Calendar, Flame } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const routes = [
@@ -22,6 +22,11 @@ const routes = [
     href: '/habits',
   },
   {
+    label: 'Fitness',
+    icon: Flame,
+    href: '/fitness',
+  },
+  {
     label: 'Reports',
     icon: BarChart2,
     href: '/reports',
@@ -38,7 +43,7 @@ export function MobileNav() {
 
   return (
     <div className="fixed bottom-0 z-50 w-full h-16 bg-card border-t border-border md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
+      <div className="grid h-full w-full grid-cols-6 mx-auto font-medium">
         {routes.map((route) => (
           <Link
             key={route.href}

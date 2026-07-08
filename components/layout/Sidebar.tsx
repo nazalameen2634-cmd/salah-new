@@ -8,10 +8,10 @@ import {
   Calendar,
   Activity,
   BarChart3,
-  Settings,
   LogOut,
   Moon,
-  Sun
+  Sun,
+  Flame
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
@@ -32,6 +32,11 @@ const routes = [
     label: 'Habit Tracker',
     icon: Activity,
     href: '/habits',
+  },
+  {
+    label: 'Fitness Tracker',
+    icon: Flame,
+    href: '/fitness',
   },
   {
     label: 'Reports',
