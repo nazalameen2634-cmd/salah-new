@@ -20,7 +20,7 @@ export async function login(formData: FormData) {
     .single()
 
   if (error || !user) {
-    return { error: 'No account found with this phone number. Please sign up.' }
+    return { error: error ? `Login failed: ${error.message}` : 'No account found with this phone number. Please sign up.' }
   }
 
   await setAuthCookie(user.id)
@@ -52,7 +52,7 @@ export async function signup(formData: FormData) {
     if (error.code === '23505') { // Unique violation
       return { error: 'An account with this phone number already exists. Please log in.' }
     }
-    return { error: 'Failed to create account. Please try again.' }
+    return { error: `Failed to create account: ${error.message}` }
   }
 
   if (user) {
