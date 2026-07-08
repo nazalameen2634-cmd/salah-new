@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Habit, HabitLog } from '@/types/supabase'
 import { createClient } from '@/lib/supabase/client'
@@ -30,6 +30,11 @@ export function HabitList({ initialHabits, initialLogs, date, userId }: HabitLis
   const [logs, setLogs] = useState<HabitLog[]>(initialLogs)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null)
+
+  useEffect(() => {
+    setHabits(initialHabits)
+    setLogs(initialLogs)
+  }, [initialHabits, initialLogs])
 
   const deleteHabit = useMutation({
     mutationFn: async (habitId: string) => {

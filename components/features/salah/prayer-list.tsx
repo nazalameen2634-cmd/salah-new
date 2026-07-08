@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Prayer } from '@/types/supabase'
 import { createClient } from '@/lib/supabase/client'
@@ -25,6 +25,10 @@ export function PrayerList({ initialPrayers, date, userId }: PrayerListProps) {
   
   // Local state for optimistic updates
   const [prayers, setPrayers] = useState<Prayer[]>(initialPrayers)
+
+  useEffect(() => {
+    setPrayers(initialPrayers)
+  }, [initialPrayers])
 
   const togglePrayer = useMutation({
     mutationFn: async ({ prayerName, completed, jamaah }: { prayerName: string, completed: boolean, jamaah?: boolean }) => {

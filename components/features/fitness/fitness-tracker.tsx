@@ -34,6 +34,11 @@ export function FitnessTracker({ date, initialLog, userId }: FitnessTrackerProps
       setActiveMinutes(initialLog.active_minutes?.toString() || '')
       setSteps(initialLog.steps?.toString() || '')
       setWaterIntake(initialLog.water_intake_ml?.toString() || '')
+    } else {
+      setCaloriesBurned('')
+      setActiveMinutes('')
+      setSteps('')
+      setWaterIntake('')
     }
   }, [initialLog])
 
