@@ -20,3 +20,24 @@ export async function removeAuthCookie() {
   const cookieStore = await cookies()
   cookieStore.delete('custom_auth_user_id')
 }
+
+export async function setAdminCookie() {
+  const cookieStore = await cookies()
+  cookieStore.set('admin_session', 'true', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 24, // 1 day
+    path: '/',
+  })
+}
+
+export async function getAdminCookie(): Promise<boolean> {
+  const cookieStore = await cookies()
+  const cookie = cookieStore.get('admin_session')
+  return cookie?.value === 'true'
+}
+
+export async function removeAdminCookie() {
+  const cookieStore = await cookies()
+  cookieStore.delete('admin_session')
+}

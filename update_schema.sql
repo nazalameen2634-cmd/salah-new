@@ -25,6 +25,23 @@ alter table public.habit_logs drop constraint if exists habit_logs_user_id_fkey;
 alter table public.journal drop constraint if exists journal_user_id_fkey;
 alter table public.fitness_logs drop constraint if exists fitness_logs_user_id_fkey;
 
+-- 2.5 Migrate existing user_ids into app_users so foreign keys don't fail
+insert into public.app_users (id, phone_number, name)
+select distinct user_id, 'legacy_' || user_id, 'Legacy User' from public.prayers where user_id is not null
+on conflict do nothing;
+
+insert into public.app_users (id, phone_number, name)
+select distinct user_id, 'legacy_' || user_id, 'Legacy User' from public.habits where user_id is not null
+on conflict do nothing;
+
+insert into public.app_users (id, phone_number, name)
+select distinct user_id, 'legacy_' || user_id, 'Legacy User' from public.habit_logs where user_id is not null
+on conflict do nothing;
+
+insert into public.app_users (id, phone_number, name)
+select distinct user_id, 'legacy_' || user_id, 'Legacy User' from public.fitness_logs where user_id is not null
+on conflict do nothing;
+
 -- Add new foreign keys to app_users
 alter table public.prayers add constraint prayers_user_id_fkey foreign key (user_id) references public.app_users(id) on delete cascade;
 alter table public.habits add constraint habits_user_id_fkey foreign key (user_id) references public.app_users(id) on delete cascade;
@@ -54,7 +71,15 @@ alter table public.fitness_logs drop constraint if exists fitness_logs_date_key;
 alter table public.fitness_logs drop constraint if exists fitness_logs_user_id_date_key;
 alter table public.fitness_logs add constraint fitness_logs_user_id_date_key unique (user_id, date);
 
--- 4. Reload cache
+-- 4. Disable RLS on all tables to allow our custom anon-based client queries
+alter table public.prayers disable row level security;
+alter table public.habits disable row level security;
+alter table public.habit_logs disable row level security;
+alter table public.journal disable row level security;
+alter table public.fitness_logs disable row level security;
+alter table public.profiles disable row level security;
+
+-- 5. Reload cache
 GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
 NOTIFY pgrst, 'reload schema';
