@@ -104,7 +104,7 @@ export function ProfileForm({ userId }: { userId: string }) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="time_zone">Time Zone</Label>
-              <Select value={formData.time_zone} onValueChange={v => setFormData({...formData, time_zone: v})}>
+              <Select value={formData.time_zone} onValueChange={v => setFormData({...formData, time_zone: v || ''})}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select timezone" />
                 </SelectTrigger>
@@ -119,7 +119,7 @@ export function ProfileForm({ userId }: { userId: string }) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="language">Language</Label>
-              <Select value={formData.language} onValueChange={v => setFormData({...formData, language: v})}>
+              <Select value={formData.language} onValueChange={v => setFormData({...formData, language: v || ''})}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>
