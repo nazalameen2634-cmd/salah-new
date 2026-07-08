@@ -84,7 +84,8 @@ export function PrayerList({ initialPrayers, userId, date }: PrayerListProps) {
             completed_time: variables.completed ? new Date().toISOString() : null,
             jamaah: variables.jamaah || false,
             notes: null,
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           }]
         }
       })
