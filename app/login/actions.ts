@@ -73,3 +73,44 @@ export async function resetPassword(formData: FormData) {
 
   redirect('/forgot-password?message=Check your email for a reset link')
 }
+
+export async function loginWithGoogle() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+    },
+  })
+
+  if (error) {
+    redirect('/login?error=' + error.message)
+  }
+
+  if (data?.url) {
+    redirect(data.url)
+  }
+}
+
+export async function updatePassword(formData: FormData) {
+  const supabase = await createClient()
+  const password = formData.get('password') as string
+  const confirmPassword = formData.get('confirmPassword') as string
+
+  if (!password || !confirmPassword) {
+    redirect('/reset-password?error=Both fields are required')
+  }
+
+  if (password !== confirmPassword) {
+    redirect('/reset-password?error=Passwords do not match')
+  }
+
+  const { error } = await supabase.auth.updateUser({ password })
+
+  if (error) {
+    redirect('/reset-password?error=' + error.message)
+  }
+
+  redirect('/login?message=Password updated successfully, please sign in.')
+}
