@@ -10,8 +10,10 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Activity } from 'lucide-react'
+import { Plus, Activity, MoreVertical, Pencil, Trash2 } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { CreateHabitModal } from './create-habit-modal'
+import { EditHabitModal } from './edit-habit-modal'
 
 interface HabitListProps {
   initialHabits: Habit[]
@@ -27,6 +29,32 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
   const [habits, setHabits] = useState<Habit[]>(initialHabits)
   const [logs, setLogs] = useState<HabitLog[]>(initialLogs)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null)
+
+  const deleteHabit = useMutation({
+    mutationFn: async (habitId: string) => {
+      // Delete logs first just in case there's no cascade delete
+      await supabase.from('habit_logs').delete().eq('habit_id', habitId)
+      const { error } = await supabase.from('habits').delete().eq('id', habitId)
+      if (error) throw error
+      return habitId
+    },
+    onSuccess: (deletedId) => {
+      setHabits(current => current.filter(h => h.id !== deletedId))
+      setLogs(current => current.filter(l => l.habit_id !== deletedId))
+      toast.success("Habit deleted successfully")
+      queryClient.invalidateQueries({ queryKey: ['habits'] })
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to delete habit")
+    }
+  })
+
+  const handleDelete = (habitId: string) => {
+    if (window.confirm('Are you sure you want to delete this habit?')) {
+      deleteHabit.mutate(habitId)
+    }
+  }
 
   const toggleHabit = useMutation({
     mutationFn: async ({ habitId, completed }: { habitId: string, completed: boolean }) => {
@@ -147,16 +175,33 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
                           isCompleted ? 'data-[state=checked]:bg-emerald-600 data-[state=checked]:text-white data-[state=checked]:border-emerald-600' : ''
                         }`}
                       />
-                      <div className="flex-1">
-                        <Label
-                          htmlFor={`habit-${habit.id}`}
-                          className={`text-lg font-medium cursor-pointer transition-colors ${
-                            isCompleted ? 'text-emerald-700 dark:text-emerald-400 line-through decoration-emerald-300' : ''
-                          }`}
-                        >
-                          {habit.name}
-                        </Label>
-                        <p className="text-xs text-muted-foreground mt-1 capitalize">{habit.category || 'General'}</p>
+                      <div className="flex-1 flex justify-between items-center">
+                        <div>
+                          <Label
+                            htmlFor={`habit-${habit.id}`}
+                            className={`text-lg font-medium cursor-pointer transition-colors ${
+                              isCompleted ? 'text-emerald-700 dark:text-emerald-400 line-through decoration-emerald-300' : ''
+                            }`}
+                          >
+                            {habit.name}
+                          </Label>
+                          <p className="text-xs text-muted-foreground mt-1 capitalize">{habit.category || 'General'}</p>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setEditingHabit(habit)}>
+                              <Pencil className="mr-2 h-4 w-4" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDelete(habit.id)} className="text-destructive focus:text-destructive">
+                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
                   </Card>
@@ -172,6 +217,14 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
         onClose={() => setIsModalOpen(false)} 
         userId={userId} 
         onSuccess={(newHabit) => setHabits([...habits, newHabit])}
+      />
+      <EditHabitModal
+        isOpen={!!editingHabit}
+        onClose={() => setEditingHabit(null)}
+        habit={editingHabit}
+        onSuccess={(updatedHabit) => {
+          setHabits(current => current.map(h => h.id === updatedHabit.id ? updatedHabit : h))
+        }}
       />
     </div>
   )
