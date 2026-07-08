@@ -54,7 +54,7 @@ export function ProfileForm({ userId }: { userId: string }) {
           country: formData.country,
           time_zone: formData.time_zone,
           language: formData.language,
-        })
+        } as any)
         .eq('id', userId)
 
       if (error) throw error
