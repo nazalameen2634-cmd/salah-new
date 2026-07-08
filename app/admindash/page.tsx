@@ -62,7 +62,7 @@ export default async function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map((user) => (
+                    {users.map((user: any) => (
                       <tr key={user.id} className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors">
                         <td className="px-4 py-3 font-medium text-white flex items-center">
                           <div className="h-8 w-8 rounded-full bg-red-900/30 text-red-400 flex items-center justify-center mr-3 uppercase font-bold text-xs">
