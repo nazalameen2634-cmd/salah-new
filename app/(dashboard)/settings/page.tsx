@@ -1,4 +1,16 @@
-export default function SettingsPage() {
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { ProfileForm } from '@/components/features/settings/profile-form'
+
+export default async function SettingsPage() {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/login')
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -7,12 +19,9 @@ export default function SettingsPage() {
           Manage your account settings and preferences.
         </p>
       </div>
-      <div className="h-[500px] w-full border border-dashed rounded-lg flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-lg font-semibold">Settings coming soon</h2>
-          <p className="text-sm text-muted-foreground mt-2">Theme, export, and account management.</p>
-        </div>
-      </div>
+      
+      <ProfileForm userId={user.id} />
+      
     </div>
   )
 }

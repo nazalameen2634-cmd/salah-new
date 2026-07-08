@@ -13,23 +13,50 @@ export interface Database {
         Row: {
           id: string
           name: string | null
+          username: string | null
           email: string | null
-          settings: Json
+          profile_picture: string | null
+          country: string | null
+          time_zone: string | null
+          language: string | null
+          role: string | null
+          theme_preferences: Json | null
+          notification_preferences: Json | null
+          settings: Json | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id: string
           name?: string | null
+          username?: string | null
           email?: string | null
-          settings?: Json
+          profile_picture?: string | null
+          country?: string | null
+          time_zone?: string | null
+          language?: string | null
+          role?: string | null
+          theme_preferences?: Json | null
+          notification_preferences?: Json | null
+          settings?: Json | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           name?: string | null
+          username?: string | null
           email?: string | null
-          settings?: Json
+          profile_picture?: string | null
+          country?: string | null
+          time_zone?: string | null
+          language?: string | null
+          role?: string | null
+          theme_preferences?: Json | null
+          notification_preferences?: Json | null
+          settings?: Json | null
           created_at?: string
+          updated_at?: string
         }
       }
       prayers: {
@@ -43,6 +70,7 @@ export interface Database {
           jamaah: boolean
           notes: string | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -54,6 +82,7 @@ export interface Database {
           jamaah?: boolean
           notes?: string | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -65,6 +94,7 @@ export interface Database {
           jamaah?: boolean
           notes?: string | null
           created_at?: string
+          updated_at?: string
         }
       }
       habits: {
@@ -79,6 +109,7 @@ export interface Database {
           target: number
           active: boolean
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -91,6 +122,7 @@ export interface Database {
           target?: number
           active?: boolean
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -103,6 +135,7 @@ export interface Database {
           target?: number
           active?: boolean
           created_at?: string
+          updated_at?: string
         }
       }
       habit_logs: {
@@ -114,6 +147,7 @@ export interface Database {
           completed: boolean
           notes: string | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -123,6 +157,7 @@ export interface Database {
           completed?: boolean
           notes?: string | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -132,6 +167,7 @@ export interface Database {
           completed?: boolean
           notes?: string | null
           created_at?: string
+          updated_at?: string
         }
       }
       journal: {
@@ -143,6 +179,7 @@ export interface Database {
           reflection: string | null
           notes: string | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -152,6 +189,7 @@ export interface Database {
           reflection?: string | null
           notes?: string | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -161,6 +199,7 @@ export interface Database {
           reflection?: string | null
           notes?: string | null
           created_at?: string
+          updated_at?: string
         }
       }
       fitness_logs: {
@@ -173,6 +212,7 @@ export interface Database {
           steps: number | null
           water_intake_ml: number | null
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -183,6 +223,7 @@ export interface Database {
           steps?: number | null
           water_intake_ml?: number | null
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -193,6 +234,7 @@ export interface Database {
           steps?: number | null
           water_intake_ml?: number | null
           created_at?: string
+          updated_at?: string
         }
       }
     }
@@ -204,6 +246,7 @@ export type Tables<T extends keyof Database['public']['Tables']> = Database['pub
 export type InsertTables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert']
 export type UpdateTables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update']
 
+export type Profile = Tables<'profiles'>
 export type Prayer = Tables<'prayers'>
 export type Habit = Tables<'habits'>
 export type HabitLog = Tables<'habit_logs'>
