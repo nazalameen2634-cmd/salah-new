@@ -11,7 +11,8 @@ import {
   LogOut,
   Moon,
   Sun,
-  Flame
+  Flame,
+  Settings
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
