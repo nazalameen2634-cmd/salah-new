@@ -62,7 +62,7 @@ export interface Database {
       prayers: {
         Row: {
           id: string
-          user_id: string
+          user_id?: string | null
           date: string
           prayer_name: string
           completed: boolean
@@ -74,7 +74,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          user_id: string
+          user_id?: string | null
           date: string
           prayer_name: string
           completed?: boolean
@@ -100,7 +100,7 @@ export interface Database {
       habits: {
         Row: {
           id: string
-          user_id: string
+          user_id?: string | null
           name: string
           icon: string | null
           color: string | null
@@ -113,7 +113,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          user_id: string
+          user_id?: string | null
           name: string
           icon?: string | null
           color?: string | null
@@ -142,7 +142,7 @@ export interface Database {
         Row: {
           id: string
           habit_id: string
-          user_id: string
+          user_id?: string | null
           date: string
           completed: boolean
           notes: string | null
@@ -152,7 +152,7 @@ export interface Database {
         Insert: {
           id?: string
           habit_id: string
-          user_id: string
+          user_id?: string | null
           date: string
           completed?: boolean
           notes?: string | null
@@ -173,7 +173,7 @@ export interface Database {
       journal: {
         Row: {
           id: string
-          user_id: string
+          user_id?: string | null
           date: string
           mood: string | null
           reflection: string | null
@@ -183,7 +183,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          user_id: string
+          user_id?: string | null
           date: string
           mood?: string | null
           reflection?: string | null
@@ -205,7 +205,7 @@ export interface Database {
       fitness_logs: {
         Row: {
           id: string
-          user_id: string
+          user_id?: string | null
           date: string
           calories_burned: number | null
           active_minutes: number | null
@@ -216,7 +216,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          user_id: string
+          user_id?: string | null
           date: string
           calories_burned?: number | null
           active_minutes?: number | null
