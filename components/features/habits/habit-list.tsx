@@ -98,7 +98,8 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
             date,
             completed: variables.completed,
             notes: null,
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           }]
         }
       })
