@@ -15,8 +15,6 @@ import {
   Settings
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 
 const routes = [
   {
@@ -58,13 +56,6 @@ const routes = [
 
 export function Sidebar() {
   const pathname = usePathname()
-  const router = useRouter()
-  const supabase = createClient()
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push('/login')
-  }
 
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-zinc-50 dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100">
@@ -94,12 +85,6 @@ export function Sidebar() {
             </Link>
           ))}
         </div>
-      </div>
-      <div className="px-3 py-2">
-        <Button onClick={handleLogout} variant="ghost" className="w-full justify-start text-zinc-500 dark:text-zinc-400 hover:text-destructive dark:hover:text-destructive">
-          <LogOut className="h-5 w-5 mr-3" />
-          Sign Out
-        </Button>
       </div>
     </div>
   )

@@ -18,11 +18,10 @@ import { EditHabitModal } from './edit-habit-modal'
 interface HabitListProps {
   initialHabits: Habit[]
   initialLogs: HabitLog[]
-  userId: string
   date: string
 }
 
-export function HabitList({ initialHabits, initialLogs, userId, date }: HabitListProps) {
+export function HabitList({ initialHabits, initialLogs, date }: HabitListProps) {
   const supabase = createClient()
   const queryClient = useQueryClient()
   
@@ -73,7 +72,6 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
       } else {
         const { data, error } = await (supabase.from('habit_logs') as any)
           .upsert({
-            user_id: userId,
             habit_id: habitId,
             date,
             completed,
@@ -93,7 +91,6 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
         } else {
           return [...current, {
             id: 'temp-' + Date.now(),
-            user_id: userId,
             habit_id: variables.habitId,
             date,
             completed: variables.completed,
@@ -214,7 +211,6 @@ export function HabitList({ initialHabits, initialLogs, userId, date }: HabitLis
       <CreateHabitModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        userId={userId} 
         onSuccess={(newHabit) => setHabits([...habits, newHabit])}
       />
       <EditHabitModal

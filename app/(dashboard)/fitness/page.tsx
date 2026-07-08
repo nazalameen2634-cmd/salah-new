@@ -15,14 +15,6 @@ export default async function FitnessPage({
 }) {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/login')
-  }
-
   // Get current date or date from query params
   const { date } = await searchParams
   const currentDate = date || format(new Date(), 'yyyy-MM-dd')
@@ -31,14 +23,12 @@ export default async function FitnessPage({
   const { data: initialLog } = await supabase
     .from('fitness_logs')
     .select('*')
-    .eq('user_id', user.id)
     .eq('date', currentDate)
     .single()
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <FitnessTracker 
-        userId={user.id} 
         date={currentDate} 
         initialLog={initialLog} 
       />

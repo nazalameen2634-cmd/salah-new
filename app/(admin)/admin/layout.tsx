@@ -13,25 +13,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/login')
-  }
-
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  const profile = profileData as { role: string | null } | null
-
-  if (profile?.role !== 'admin') {
-    redirect('/')
-  }
+  // Authentication removed. Admin panel is public in single-user mode.
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">

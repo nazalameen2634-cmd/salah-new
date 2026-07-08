@@ -6,12 +6,6 @@ export default async function SalahPage(props: { searchParams: Promise<{ date?: 
   const searchParams = await props.searchParams
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return null
-
   // Determine the date to fetch
   const todayLocal = new Date().toLocaleDateString('en-CA') // YYYY-MM-DD local format roughly
   // To avoid timezone issues server-side, just get UTC date if no local is provided, or better:
@@ -22,7 +16,6 @@ export default async function SalahPage(props: { searchParams: Promise<{ date?: 
   const { data: prayers } = await supabase
     .from('prayers')
     .select('*')
-    .eq('user_id', user.id)
     .eq('date', date)
 
   return (
@@ -37,7 +30,7 @@ export default async function SalahPage(props: { searchParams: Promise<{ date?: 
         <DateNavigator currentDate={date} />
       </div>
 
-      <PrayerList initialPrayers={prayers || []} userId={user.id} date={date} />
+      <PrayerList initialPrayers={prayers || []} date={date} />
     </div>
   )
 }

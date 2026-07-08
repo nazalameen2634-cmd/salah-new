@@ -13,12 +13,11 @@ import { Flame, Activity, Footprints, Droplets } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface FitnessTrackerProps {
-  userId: string
   date: string
   initialLog: FitnessLog | null
 }
 
-export function FitnessTracker({ userId, date, initialLog }: FitnessTrackerProps) {
+export function FitnessTracker({ date, initialLog }: FitnessTrackerProps) {
   const supabase = createClient()
   const queryClient = useQueryClient()
   
@@ -39,7 +38,6 @@ export function FitnessTracker({ userId, date, initialLog }: FitnessTrackerProps
   const saveFitnessLog = useMutation({
     mutationFn: async () => {
       const logData = {
-        user_id: userId,
         date,
         calories_burned: caloriesBurned ? parseInt(caloriesBurned) : 0,
         active_minutes: activeMinutes ? parseInt(activeMinutes) : 0,
@@ -57,7 +55,7 @@ export function FitnessTracker({ userId, date, initialLog }: FitnessTrackerProps
         return data
       } else {
         const { data, error } = await (supabase.from('fitness_logs') as any)
-          .upsert(logData, { onConflict: 'user_id,date' })
+          .upsert(logData, { onConflict: 'date' })
           .select()
           .single()
         if (error) throw error

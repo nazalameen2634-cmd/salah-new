@@ -14,11 +14,10 @@ import { toast } from 'sonner'
 interface CreateHabitModalProps {
   isOpen: boolean
   onClose: () => void
-  userId: string
   onSuccess: (habit: Habit) => void
 }
 
-export function CreateHabitModal({ isOpen, onClose, userId, onSuccess }: CreateHabitModalProps) {
+export function CreateHabitModal({ isOpen, onClose, onSuccess }: CreateHabitModalProps) {
   const supabase = createClient()
   const queryClient = useQueryClient()
   
@@ -29,7 +28,6 @@ export function CreateHabitModal({ isOpen, onClose, userId, onSuccess }: CreateH
     mutationFn: async () => {
       const { data, error } = await (supabase.from('habits') as any)
         .insert({
-          user_id: userId,
           name,
           category,
           frequency: 'daily',
