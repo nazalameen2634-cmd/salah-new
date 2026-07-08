@@ -7,7 +7,8 @@ export default async function AdminPage() {
 
   // We call our securely defined RPC function to get aggregate stats
   // bypassing RLS for statistical purposes without leaking actual rows
-  const { data: stats, error } = await supabase.rpc('get_platform_stats')
+  const { data, error } = await supabase.rpc('get_platform_stats')
+  const stats = data as { totalUsers: number; activeUsers7d: number } | null
   
   const totalUsers = stats?.totalUsers || 0
   const activeUsers7d = stats?.activeUsers7d || 0
