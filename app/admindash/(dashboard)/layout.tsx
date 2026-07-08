@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { getAdminCookie } from '@/lib/auth'
 import Link from 'next/link'
 import { ShieldAlert, Users, LogOut, ArrowLeft } from 'lucide-react'
-import { adminLogout } from './login/actions'
+import { adminLogout } from '../login/actions'
 
 export default async function AdminLayout({
   children,
