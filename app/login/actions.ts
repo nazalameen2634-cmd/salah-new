@@ -13,7 +13,7 @@ export async function login(formData: FormData) {
   const supabase = await createClient()
 
   // Find user by phone number
-  const { data: user, error } = await supabase
+  const { data: user, error } = await (supabase as any)
     .from('app_users')
     .select('id')
     .eq('phone_number', phone)
@@ -39,7 +39,7 @@ export async function signup(formData: FormData) {
   const supabase = await createClient()
 
   // Create new user
-  const { data: user, error } = await supabase
+  const { data: user, error } = await (supabase as any)
     .from('app_users')
     .insert({
       phone_number: phone,
