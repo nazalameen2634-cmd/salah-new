@@ -27,7 +27,7 @@ export async function login(prevState: any, formData: FormData) {
   redirect('/')
 }
 
-export async function signup(formData: FormData) {
+export async function signup(prevState: any, formData: FormData) {
   const supabase = await createClient()
 
   const email = formData.get('email') as string
@@ -35,10 +35,10 @@ export async function signup(formData: FormData) {
   const fullName = formData.get('fullName') as string
 
   if (!email || !password || !fullName) {
-    redirect('/signup?error=All fields are required')
+    return { error: 'All fields are required' }
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -49,7 +49,12 @@ export async function signup(formData: FormData) {
   })
 
   if (error) {
-    redirect('/signup?error=' + error.message)
+    return { error: error.message }
+  }
+
+  if (data.session) {
+    revalidatePath('/', 'layout')
+    redirect('/')
   }
 
   redirect('/login?message=Check your email to verify your account')
