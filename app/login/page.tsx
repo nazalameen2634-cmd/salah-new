@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useFormStatus } from 'react-dom'
+import { useFormState, useFormStatus } from 'react-dom'
 import { login, loginWithGoogle } from './actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,6 +10,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
+
+const initialState = {
+  error: null as string | null,
+}
 
 function SubmitButton() {
   const { pending } = useFormStatus()
@@ -34,6 +38,7 @@ export default function LoginPage({
   searchParams: { error?: string, message?: string }
 }) {
   const [showPassword, setShowPassword] = useState(false)
+  const [state, formAction] = useFormState(login, initialState)
   
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4">
@@ -48,7 +53,7 @@ export default function LoginPage({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={login} className="space-y-4">
+          <form action={formAction} className="space-y-4">
             <div className="space-y-2 text-left">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -98,7 +103,8 @@ export default function LoginPage({
               </Label>
             </div>
 
-            {searchParams.error && <p className="text-sm font-medium text-destructive text-center mt-2">{searchParams.error}</p>}
+            {state?.error && <p className="text-sm font-medium text-destructive text-center mt-2">{state.error}</p>}
+            {searchParams.error && !state?.error && <p className="text-sm font-medium text-destructive text-center mt-2">{searchParams.error}</p>}
             {searchParams.message && <p className="text-sm font-medium text-emerald-600 text-center mt-2">{searchParams.message}</p>}
             
             <SubmitButton />
