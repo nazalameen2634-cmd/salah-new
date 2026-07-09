@@ -67,6 +67,28 @@ export default function SignupPage() {
               </p>
             </div>
             
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="h-11"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="confirm_password">Confirm Password</Label>
+              <Input
+                id="confirm_password"
+                name="confirm_password"
+                type="password"
+                required
+                className="h-11"
+              />
+            </div>
+            
             {error && (
               <div className="p-3 text-sm text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-400 rounded-md border border-red-100 dark:border-red-900/50">
                 {error}

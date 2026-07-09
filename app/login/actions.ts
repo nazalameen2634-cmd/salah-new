@@ -3,11 +3,14 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { setAuthCookie, removeAuthCookie } from '@/lib/auth'
+import bcrypt from 'bcryptjs'
 
 export async function login(formData: FormData) {
   const phone = formData.get('phone') as string
-  if (!phone) {
-    return { error: 'Phone number is required' }
+  const password = formData.get('password') as string
+
+  if (!phone || !password) {
+    return { error: 'Phone number and password are required' }
   }
   
   if (!/^[0-9]{10}$/.test(phone)) {
@@ -19,13 +22,23 @@ export async function login(formData: FormData) {
   // Find user by phone number
   const { data: user, error } = await (supabase as any)
     .from('app_users')
-    .select('id')
+    .select('id, password_hash')
     .eq('phone_number', phone)
     .single()
 
   if (error || !user) {
-    return { error: error ? `Login failed: ${error.message}` : 'No account found with this phone number. Please sign up.' }
+    return { error: 'Invalid phone number or password.' }
   }
+
+  // If user has a password set, verify it
+  if (user.password_hash) {
+    const isValid = await bcrypt.compare(password, user.password_hash)
+    if (!isValid) {
+      return { error: 'Invalid phone number or password.' }
+    }
+  }
+  // (If no password_hash exists yet for legacy users, we allow login so they can set it later, 
+  // or we could force them to reset it. For now, allow fallback for legacy accounts).
 
   await setAuthCookie(user.id)
   
@@ -35,9 +48,15 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const phone = formData.get('phone') as string
   const name = formData.get('name') as string
+  const password = formData.get('password') as string
+  const confirmPassword = formData.get('confirm_password') as string
 
-  if (!phone || !name) {
-    return { error: 'Name and phone number are required' }
+  if (!phone || !name || !password) {
+    return { error: 'All fields are required' }
+  }
+
+  if (password !== confirmPassword) {
+    return { error: 'Passwords do not match' }
   }
 
   if (!/^[0-9]{10}$/.test(phone)) {
@@ -46,12 +65,15 @@ export async function signup(formData: FormData) {
 
   const supabase = await createClient()
 
+  const hashedPassword = await bcrypt.hash(password, 10)
+
   // Create new user
   const { data: user, error } = await (supabase as any)
     .from('app_users')
     .insert({
       phone_number: phone,
-      name: name
+      name: name,
+      password_hash: hashedPassword
     })
     .select('id')
     .single()
