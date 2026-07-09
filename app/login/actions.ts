@@ -186,7 +186,7 @@ export async function resetPassword(userId: string, token: string, newPassword: 
 
 export async function changeTempPassword(newPassword: string) {
   const { cookies } = await import('next/headers')
-  const authCookie = (await cookies()).get('auth-token')
+  const authCookie = (await cookies()).get('custom_auth_user_id')
   if (!authCookie) return { error: 'Not authenticated.' }
   
   const userId = authCookie.value
