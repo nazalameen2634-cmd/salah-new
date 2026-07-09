@@ -8,6 +8,22 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { UserPlus } from 'lucide-react'
 import { signup } from '@/app/login/actions'
+import { Check, Loader2 } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+const SECURITY_QUESTIONS = [
+  "What was the name of your first pet?",
+  "What is your mother's maiden name?",
+  "What city were you born in?",
+  "What was your childhood nickname?",
+  "What is the name of your favorite teacher?",
+]
 
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
@@ -84,6 +100,61 @@ export default function SignupPage() {
                 id="confirm_password"
                 name="confirm_password"
                 type="password"
+                required
+                className="h-11"
+              />
+            </div>
+
+            <div className="pt-2 pb-1">
+              <h3 className="text-sm font-medium border-b pb-2">Security Questions</h3>
+              <p className="text-xs text-muted-foreground mt-1">Used for password recovery</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="security_q1">Question 1</Label>
+              <Select name="security_q1" required defaultValue={SECURITY_QUESTIONS[0]}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Select a question" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SECURITY_QUESTIONS.map((q) => (
+                    <SelectItem key={q} value={q}>{q}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="security_a1">Answer 1</Label>
+              <Input
+                id="security_a1"
+                name="security_a1"
+                type="text"
+                required
+                className="h-11"
+              />
+            </div>
+
+            <div className="space-y-2 mt-4">
+              <Label htmlFor="security_q2">Question 2</Label>
+              <Select name="security_q2" required defaultValue={SECURITY_QUESTIONS[1]}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Select a question" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SECURITY_QUESTIONS.map((q) => (
+                    <SelectItem key={q} value={q}>{q}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="security_a2">Answer 2</Label>
+              <Input
+                id="security_a2"
+                name="security_a2"
+                type="text"
                 required
                 className="h-11"
               />
